@@ -3,9 +3,13 @@ fs = require('fs');
 
 const yaml = require('js-yaml')
 const core = require('@actions/core')
-const github = require('@actions/github')
+const AWS = require('aws-sdk');
+const { getDefaultRoleAssumerWithWebIdentity } = require("@aws-sdk/client-sts");
+const { defaultProvider } = require("@aws-sdk/credential-provider-node");
+const { S3Client, AbortMultipartUploadCommand, PutObjectCommand } = require("@aws-sdk/client-s3");
 
-function run(){
+
+function run() {
 
     let returnCatalog = []
     let modules = []
@@ -34,15 +38,65 @@ function run(){
         modules = [...modules, data]
     });
 
-    let releaseInfo = JSON.parse(core.getInput('version'))
+    
+    let releaseInfo = core.getInput('version')
+
+    if(releaseInfo.length > 0) {
+        releaseInfo = JSON.parse(core.getInput('version'))
+    } else {
+        releaseInfo = {
+            'current' : {
+                release: ''
+            }
+        }
+    }
 
     returnCatalog = { 
         'version': releaseInfo['current']['release'],
         modules
     }
+
     console.log(returnCatalog)
 
+    const provider = defaultProvider({
+        roleAssumerWithWebIdentity: getDefaultRoleAssumerWithWebIdentity
+    });
 
+    const client = new S3Client({ credentialDefaultProvider: provider, region: 'us-east-1' });
+
+    const paramsVer = {
+        Bucket: 'triplelift-dev-backstage',
+        Key: `catalog-module-${releaseInfo['current']['release']}.json`, // File name you want to save as in S3
+        Body: `${JSON.stringify(returnCatalog)}`,
+        ContentType: 'application/json'
+    };
+
+    const paramsLatest = {
+        Bucket: 'triplelift-dev-backstage',
+        Key: `catalog-module-latest.json`, // File name you want to save as in S3
+        Body: `${JSON.stringify(returnCatalog)}`,
+        ContentType: 'application/json'
+    };
+
+
+    let command = new PutObjectCommand(paramsVer);
+
+    client.send(command).then((data) =>{
+        console.log(data)
+    }, 
+    (error) => {
+        console.log(error)
+    })
+
+    command = new PutObjectCommand(paramsLatest);
+
+    client.send(command).then((data) =>{
+        console.log(data)
+    }, 
+    (error) => {
+        console.log(error)
+    })
+    
 }
 
 run()
