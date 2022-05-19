@@ -14,8 +14,16 @@ jobs:
       with:
         owner: "anestor6"
         repo: "self-service-action"
+<<<<<<< HEAD
     - run: echo '${{ steps.info.outputs.release_info.current }}'
+=======
+        
+    - name: Print Release
+      run: echo '${{ steps.info.outputs.release_info }}'
+    
+
+>>>>>>> aa85dd146785b31b5088b049ad63d1466957a8d9
     - uses: actions/checkout@v2
     - uses: ./
       with: 
-        version: ${{ github.event.release.tag_name }}
+        version: ${{ steps.info.outputs.release_info }}
