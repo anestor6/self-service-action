@@ -14,7 +14,7 @@ jobs:
       with:
         owner: "anestor6"
         repo: "self-service-action"
-    - run: echo '${{ steps.info.outputs.release_info }}'
+    - run: echo '${{ steps.info.outputs.release_info.current.release }}'
     - uses: actions/checkout@v2
     - uses: ./
       with: 
