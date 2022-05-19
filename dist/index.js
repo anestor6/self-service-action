@@ -13005,15 +13005,9 @@ function run(){
     });
 
     let releaseInfo = JSON.parse(core.getInput('version'))
-    console.log(typeof releaseInfo)
-    console.log(Object.keys(releaseInfo))
 
-    console.log(releaseInfo['current'])
-
-    console.log(core.getInput('version'))
-
-    returnCatalog = {
-        'version': ``,
+    returnCatalog = { 
+        'version': releaseInfo['current']['release'],
         modules
     }
     console.log(returnCatalog)
