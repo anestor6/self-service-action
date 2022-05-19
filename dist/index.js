@@ -13004,7 +13004,13 @@ function run(){
         modules = [...modules, data]
     });
 
-    console.log(core.getInput('version')['current'])
+    console.log(typeof core.getInput('version'))
+    console.log(Object.keys(core.getInput('version')))
+    let releaseInfo = core.getInput('version')
+
+    console.log(releaseInfo['current'])
+
+    console.log(core.getInput('version'))
 
     returnCatalog = {
         'version': ``,
