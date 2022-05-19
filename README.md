@@ -1,2 +1,2 @@
 # self-service-action
-Publishes self-service catalogs to Backstage.
+Publishes self-service catalogs to Backstage..
