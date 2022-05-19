@@ -4,18 +4,18 @@ on:
   pull_request:
     types: [opened]
 
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Gets latest created release info
-        id: latest_release_info
-        uses: jossef/action-latest-release-info@v1.1.0
-
-      - name: Output release tag
-        run: echo ${{ steps.latest_release_info.outputs.tag_name }}
-
-      - uses: ./
-        with: 
-          version: ${{ github.event.release.tag_name }}
+    - id: info
+      uses: konveyor/get-release-info@v1
+      with:
+        owner: "anestor6"
+        repo: "self-service-action"
+    - run: echo '${{ steps.info.outputs.release_info }}'
+    - uses: actions/checkout@v2
+    - uses: ./
+      with: 
+        version: ${{ github.event.release.tag_name }}
