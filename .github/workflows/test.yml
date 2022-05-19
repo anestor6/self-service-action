@@ -17,6 +17,7 @@ jobs:
         repo: "self-service-action"
         
     - name: Print Release Info
+    - uses: actions/checkout@v2
     - run: echo '${{ steps.info.outputs.release_info }}'
     
     - name: Get Modules
