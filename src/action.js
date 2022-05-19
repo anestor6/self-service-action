@@ -34,9 +34,7 @@ function run(){
         modules = [...modules, data]
     });
 
-    console.log(core.getInput('version'))
-    console.log('STRINGIFY', JSON.stringify(core.getInput('version')))
-    console.log('STRINGIFIED current', JSON.stringify(core.getInput('version').current))
+    console.log(core.getInput('version')['current'])
 
     returnCatalog = {
         'version': ``,
