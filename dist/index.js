@@ -13004,11 +13004,14 @@ function run(){
         modules = [...modules, data]
     });
 
+    console.log(core.getInput('version').current)
+
     returnCatalog = {
-        'version': `${core.getInput('version')}`,
+        'version': ``,
         modules
     }
     console.log(returnCatalog)
+
 
 }
 
