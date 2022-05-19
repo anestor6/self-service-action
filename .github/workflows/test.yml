@@ -9,13 +9,18 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+    - name: Get Release Info
     - id: info
       uses: konveyor/get-release-info@v1
       with:
         owner: "anestor6"
         repo: "self-service-action"
+        
+    - name: Print Release Info
     - run: echo '${{ steps.info.outputs.release_info }}'
+    
+    - name: Get Modules
     - uses: actions/checkout@v2
     - uses: ./
       with: 
-        version: ${{ github.event.release.tag_name }}
+        version: ${{ steps.info.outputs.release_info }}
