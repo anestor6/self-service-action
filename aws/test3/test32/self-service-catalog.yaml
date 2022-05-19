@@ -1,0 +1,17 @@
+name: nomad-worker
+display: Nomad Worker
+description: |
+  Nomad worker allows for quick and easy deployment of services. 
+tags:
+  - nomad
+  - deployment
+  - hashicorp
+links:
+  - title: Dev Environment Website
+    url: https://backstage.dev.triplelift.net/
+  - title: Documentation
+    url: https://github.com/triplelift-internal/aws-nextgen-modules/tree/master/aws/applications/nomad-worker
+  - title: Nomad Dev Environment Deployment
+    url: https://nomad-development.us-east-1.triplelift.net/ui/
+annotations:
+  github.com/project-slug: triplelift-internal/aws-nextgen-modules/tree/master/aws/applications/nomad-worker

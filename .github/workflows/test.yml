@@ -10,3 +10,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./
+        with: 
+          version: ${{ github.event.release.tag_name }}

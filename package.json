@@ -18,6 +18,9 @@
   },
   "homepage": "https://github.com/anestor6/self-service-action#readme",
   "dependencies": {
-    "@vercel/ncc": "^0.33.4"
+    "@actions/core": "^1.8.2",
+    "@actions/github": "^5.0.3",
+    "@vercel/ncc": "^0.33.4",
+    "js-yaml": "^4.1.0"
   }
 }
