@@ -13004,9 +13004,9 @@ function run(){
         modules = [...modules, data]
     });
 
-    console.log(typeof core.getInput('version'))
-    console.log(Object.keys(core.getInput('version')))
-    let releaseInfo = core.getInput('version')
+    let releaseInfo = JSON.parse(core.getInput('version'))
+    console.log(typeof releaseInfo)
+    console.log(Object.keys(releaseInfo))
 
     console.log(releaseInfo['current'])
 
