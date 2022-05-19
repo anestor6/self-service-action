@@ -1,0 +1,7 @@
+name: 'Self Service Catalog'
+description: 'Find and catalog self service modules for Backstage'
+author: 'Arron Nestor'
+
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
