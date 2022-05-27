@@ -3,7 +3,7 @@ kind: Template
 # some metadata about the template itself
 metadata:
   name: java-microservice-template
-  title: Java Microservice Template
+  title: Infta Test Java Microservice Template
   description: Bootstrap application for Spring GraphQL microservices
   tags:
     - java
