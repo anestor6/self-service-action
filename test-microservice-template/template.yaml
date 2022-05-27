@@ -18,6 +18,15 @@ spec:
   type: template
   lifecycle: experimental
   parameters:
+    - title: Fill in some steps
+      required:
+        - name
+      properties:
+        name:
+          title: Name
+          type: string
+          description: My custom name for the component
+          ui:field: Infra
     - title: Provide some simple information
       required:
         - name
