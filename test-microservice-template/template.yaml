@@ -63,6 +63,11 @@ spec:
           ui:help: Select which dependencies you want incllude in your generated repository.
           ui:widget: checkboxes
           uniqueItems: true
+        infrastructure:
+          title: Infrastucture
+          type: array
+          default: []
+          ui:field: Infra
     - title: Choose a location
       required:
         - repoUrl
