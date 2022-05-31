@@ -20,8 +20,10 @@ spec:
   parameters:
     - title: Add Infrastructure
       properties:
-        name:
+        infrastructure:
           title: Infrastucture
+          type: array
+          default: []
           ui:field: Infra
     - title: Provide some simple information
       required:
