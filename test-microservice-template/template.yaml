@@ -18,6 +18,13 @@ spec:
   type: template
   lifecycle: experimental
   parameters:
+    - title: Add Infrastructure
+      properties:
+        infrastructure:
+           title: Infrastucture
+           type: array
+           default: []
+           ui:field: Infra
     - title: Provide some simple information
       required:
         - name
@@ -68,13 +75,6 @@ spec:
           ui:options:
             allowedHosts:
               - github.com
-    - title: Add Infrastructure
-      properties:
-        infrastructure:
-           title: Infrastucture
-           type: array
-           default: []
-           ui:field: Infra
 
   steps:
     - id: fetch-repo
