@@ -56,11 +56,6 @@ spec:
           ui:help: Select which dependencies you want incllude in your generated repository.
           ui:widget: checkboxes
           uniqueItems: true
-        infrastructure:
-          title: Infrastucture
-          type: array
-          default: []
-          ui:field: Infra
     - title: Choose a location
       required:
         - repoUrl
@@ -73,6 +68,13 @@ spec:
           ui:options:
             allowedHosts:
               - github.com
+     - title: Add Infrastructure
+       properties:
+         infrastructure:
+            title: Infrastucture
+            type: array
+            default: []
+            ui:field: Infra
 
   steps:
     - id: fetch-repo
