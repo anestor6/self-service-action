@@ -68,13 +68,13 @@ spec:
           ui:options:
             allowedHosts:
               - github.com
-     - title: Add Infrastructure
-       properties:
-         infrastructure:
-            title: Infrastucture
-            type: array
-            default: []
-            ui:field: Infra
+    - title: Add Infrastructure
+      properties:
+        infrastructure:
+           title: Infrastucture
+           type: array
+           default: []
+           ui:field: Infra
 
   steps:
     - id: fetch-repo
