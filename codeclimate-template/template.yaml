@@ -139,7 +139,7 @@ spec:
           content-type: 'application/json'
         body:
           data:
-            type: repos
+            type: 'repos'
             attributes:
               url: ${{ steps.publish.output.remoteUrl.slice(0, -4) }}
 
