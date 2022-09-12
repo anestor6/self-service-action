@@ -1,8 +1,8 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: an-java-microservice-template-codeclimate-test-2
-  title: AN Java Microservice Template Code Climate Test-2
+  name: an-java-microservice-template-codeclimate-test-3
+  title: AN Java Microservice Template Code Climate Test-3
   description: Bootstrap application for Spring GraphQL microservices
   tags:
     - java
