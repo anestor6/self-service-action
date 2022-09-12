@@ -1,8 +1,8 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: an-java-microservice-template-codeclimate-test-3
-  title: AN Java Microservice Template Code Climate Test-3
+  name: an-java-microservice-template-codeclimate-test-4
+  title: AN Java Microservice Template Code Climate Test-4
   description: Bootstrap application for Spring GraphQL microservices
   tags:
     - java
@@ -70,20 +70,6 @@ spec:
 
   steps:
   
-    - id: cc-create
-      name: Create Code Climate Projects
-      action: http:backstage:request
-      input:
-        method: 'POST'
-        path: 'api/proxy/codeclimate/api/orgs/6217a5d89f71b400e0003168/repos'
-        headers:
-          content-type: 'application/json'
-        body:
-          data:
-            type: 'repos'
-            attributes:
-              url: 'https://github.com/triplelift-internal/AN-CC-TEST-10'
-              
     - id: fetch-repo
       name: Fetch Repo
       action: fetch:template
@@ -143,6 +129,20 @@ spec:
       input:
         repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
         catalogInfoPath: "/catalog-info.yaml"
+       
+     - id: cc-create
+        name: Create Code Climate Projects
+        action: http:backstage:request
+        input:
+          method: 'POST'
+          path: 'api/proxy/codeclimate/api/orgs/6217a5d89f71b400e0003168/repos'
+          headers:
+            content-type: 'application/json'
+          body:
+            data:
+              type: 'repos'
+              attributes:
+                url: ${{ steps.publish.output.remoteUrl.slice(0, -4) }}
 
   output:
     getResponse: ${{ steps.cc-create.output.body }}
