@@ -1,0 +1,153 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: java-microservice-template-codeclimate
+  title: AN Java Microservice Template Code Climate Test
+  description: Bootstrap application for Spring GraphQL microservices
+  tags:
+    - java
+    - spring
+    - graphql
+  annotations:
+    github.com/project-slug: triplelift-internal/microservice-templates
+    backstage.io/techdocs-ref: dir:.
+    backstage.io/code-coverage: enabled
+spec:
+  owner: auctions
+  type: template
+  lifecycle: experimental
+  parameters:
+    - title: Provide some simple information
+      required:
+        - name
+        - owner
+      properties:
+        name:
+          title: Name
+          type: string
+          description: Unique name of the component. Must be all lowercase and dash separated (i.e., "deals-api")
+        description:
+          title: Description
+          type: string
+          description: Help others understand what this service is for.
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds:
+              - Group
+    - title: Select the dependencies you want
+      required:
+        - dependencies
+      properties:
+        dependencies:
+          title: Available dependencies
+          type: array
+          default: []
+          items:
+            type: string
+            enum:
+              - sdk_publishing
+            enumNames:
+              - SDK Publishing
+          ui:help: Select which dependencies you want incllude in your generated repository.
+          ui:widget: checkboxes
+          uniqueItems: true
+    - title: Choose a location
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          title: Repository Location
+          type: string
+          default: github.com?owner=triplelift-internal&repo=
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+
+  steps:
+    - id: fetch-repo
+      name: Fetch Repo
+      action: fetch:template
+      input:
+        copyWithoutRender:
+          - .github/workflows/*
+          - docs/themes/*
+        url: ./skeleton
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          destination: ${{ parameters.repoUrl | parseRepoUrl }}
+          dependencies: ${{ parameters.dependencies }}
+          templateVersion: 1.0.13-SNAPSHOT
+            
+    - id: directory-rename
+      name: Rename TEMPLATE API
+      action: fs:rename
+      input:
+        files:
+          - from: ./${{parameters.name}}/src/main/java/com/triplelift/TEMPLATE_API
+            to: ./${{parameters.name}}/src/main/java/com/triplelift/${{parameters.name | replace("-", "_")}}
+          - from: ./${{parameters.name}}/src/test/java/com/triplelift/TEMPLATE_API
+            to: ./${{parameters.name}}/src/test/java/com/triplelift/${{parameters.name | replace("-", "_")}}
+          - from: ./${{parameters.name}}/src/it/java/com/triplelift/TEMPLATE_API
+            to: ./${{parameters.name}}/src/it/java/com/triplelift/${{parameters.name | replace("-", "_")}}
+
+    - id: delete-files-sdk-publishing
+      if: ${{ "sdk_publishing" not in parameters.dependencies }}
+      name: Delete SDK Publising files
+      action: fs:delete
+      input:
+        files:
+          - ${{parameters.name}}/${{parameters.name}}-sdk
+          - .github/workflows/publish-sdk.yml
+          - ${{parameters.name}}/package.json
+
+    - id: publish
+      name: Publish
+      action: publish:github
+      input:
+        allowedHosts: [ 'github.com' ]
+        description: ${{ parameters.description }}
+        repoUrl: ${{ parameters.repoUrl }}
+        repoVisibility: 'internal'
+        defaultBranch: 'develop'
+        collaborators:
+          - team: 'engineering'
+            access: 'maintain'
+          - team: ${{ parameters.owner }}
+            access: 'admin'
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: "/catalog-info.yaml"
+        
+    - id: cc-create
+      name: Create Code Climate Projects
+      action: http:backstage:request
+      input:
+        method: 'POST'
+        path: '/api/proxy/codeclimate/v1/orgs/6217a5d89f71b400e0003168/repos'
+        body:
+          data:
+            type: repos
+            attributes:
+              url: ${{ steps.publish.output.remoteUrl.slice(0, -4) }}
+
+  output:
+    getResponse: ${{ steps.cc-create.output.body }}
+    getCode: ${{ steps.cc-create.output.code }}
+    getHeaders: ${{ steps.cc-create.output.headers }}
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}
