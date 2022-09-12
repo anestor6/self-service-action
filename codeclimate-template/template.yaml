@@ -130,19 +130,19 @@ spec:
         repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
         catalogInfoPath: "/catalog-info.yaml"
        
-     - id: cc-create
-       name: Create Code Climate Projects
-       action: http:backstage:request
-       input:
-         method: 'POST'
-         path: 'api/proxy/codeclimate/api/orgs/6217a5d89f71b400e0003168/repos'
-         headers:
-           content-type: 'application/json'
-         body:
-           data:
-             type: 'repos'
-             attributes:
-               url: ${{ steps.publish.output.remoteUrl.slice(0, -4) }}
+    - id: cc-create
+      name: Create Code Climate Projects
+      action: http:backstage:request
+      input:
+        method: 'POST'
+        path: 'api/proxy/codeclimate/api/orgs/6217a5d89f71b400e0003168/repos'
+        headers:
+          content-type: 'application/json'
+        body:
+          data:
+            type: 'repos'
+            attributes:
+              url: ${{ steps.publish.output.remoteUrl.slice(0, -4) }}
 
   output:
     getResponse: ${{ steps.cc-create.output.body }}
