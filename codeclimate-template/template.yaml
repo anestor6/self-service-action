@@ -1,7 +1,7 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: java-microservice-template-codeclimate
+  name: an-java-microservice-template-codeclimate-test
   title: AN Java Microservice Template Code Climate Test
   description: Bootstrap application for Spring GraphQL microservices
   tags:
@@ -135,6 +135,8 @@ spec:
       input:
         method: 'POST'
         path: '/api/proxy/codeclimate/v1/orgs/6217a5d89f71b400e0003168/repos'
+        headers:
+          content-type: 'application/json'
         body:
           data:
             type: repos
