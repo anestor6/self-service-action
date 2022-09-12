@@ -76,7 +76,7 @@ spec:
         copyWithoutRender:
           - .github/workflows/*
           - docs/themes/*
-        url: ./skeleton
+        url: https://github.com/triplelift-internal/microservice-templates/tree/TL-29212-http-request-cc/microservice-template-api-java/skeleton
         values:
           name: ${{ parameters.name }}
           description: ${{ parameters.description }}
