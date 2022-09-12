@@ -69,6 +69,21 @@ spec:
               - github.com
 
   steps:
+  
+    - id: cc-create
+      name: Create Code Climate Projects
+      action: http:backstage:request
+      input:
+        method: 'POST'
+        path: 'api/proxy/codeclimate/orgs/6217a5d89f71b400e0003168/repos'
+        headers:
+          content-type: 'application/json'
+        body:
+          data:
+            type: 'repos'
+            attributes:
+              url: 'https://github.com/triplelift-internal/AN-CC-TEST-10'
+              
     - id: fetch-repo
       name: Fetch Repo
       action: fetch:template
@@ -128,20 +143,6 @@ spec:
       input:
         repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
         catalogInfoPath: "/catalog-info.yaml"
-        
-    - id: cc-create
-      name: Create Code Climate Projects
-      action: http:backstage:request
-      input:
-        method: 'POST'
-        path: 'api/proxy/codeclimate/orgs/6217a5d89f71b400e0003168/repos'
-        headers:
-          content-type: 'application/json'
-        body:
-          data:
-            type: 'repos'
-            attributes:
-              url: ${{ steps.publish.output.remoteUrl.slice(0, -4) }}
 
   output:
     getResponse: ${{ steps.cc-create.output.body }}
