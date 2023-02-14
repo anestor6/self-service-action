@@ -1,9 +1,8 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
-# some metadata about the template itself
 metadata:
-  name: infra-java-microservice-template
-  title: Infra Test Java Microservice Template
+  name: java-microservice-template
+  title: Java Microservice Template
   description: Bootstrap application for Spring GraphQL microservices
   tags:
     - java
@@ -18,13 +17,6 @@ spec:
   type: template
   lifecycle: experimental
   parameters:
-    - title: Add Infrastructure
-      properties:
-        infrastructure:
-           title: Infrastucture
-           type: array
-           default: []
-           ui:field: Infra
     - title: Provide some simple information
       required:
         - name
@@ -57,10 +49,12 @@ spec:
           items:
             type: string
             enum:
-              - sdk-publishing
+              - sdk_publishing
+              - flyway_migrate_files
             enumNames:
-              - SDK Publishing
-          ui:help: Select which dependencies you want incllude in your generated repository.
+              - GraphQL Code Generator - This plugin generates graphql-request ready-to-use TypeScript SDK.
+              - Flyway Migrate Files - Generate Flyway Migrate GitHub Actions and db-migrations folder with a sample file.
+          ui:help: Select which dependencies you want include in your generated repository.
           ui:widget: checkboxes
           uniqueItems: true
     - title: Choose a location
@@ -75,14 +69,24 @@ spec:
           ui:options:
             allowedHosts:
               - github.com
+    - title: Add Infrastructure
+      properties:
+        infrastructure:
+          title: Infrastucture
+          type: array
+          default: [ ]
+          ui:field: Infra
 
   steps:
     - id: fetch-repo
-      name: Fetch Repo
+      name: Interpolating Values in Template
       action: fetch:template
       input:
-        copyWithoutRender:
-          - .github/workflows/*
+        copyWithoutTemplating:
+          - .github/workflows/draft-new-release.yml
+          - .github/workflows/integration-tests.yml
+          - .github/workflows/publish-release.yml
+          - .github/workflows/unit-tests.yml
           - docs/themes/*
         url: ./skeleton
         values:
@@ -91,37 +95,78 @@ spec:
           owner: ${{ parameters.owner }}
           destination: ${{ parameters.repoUrl | parseRepoUrl }}
           dependencies: ${{ parameters.dependencies }}
+          templateVersion: 1.1.4-SNAPSHOT
+            
+    - id: directory-rename
+      name: Renaming Files for Template
+      action: fs:rename
+      input:
+        files:
+          - from: ./${{parameters.name}}/src/main/java/com/triplelift/TEMPLATE_API
+            to: ./${{parameters.name}}/src/main/java/com/triplelift/${{parameters.name | replace("-", "_")}}
+          - from: ./${{parameters.name}}/src/test/java/com/triplelift/TEMPLATE_API
+            to: ./${{parameters.name}}/src/test/java/com/triplelift/${{parameters.name | replace("-", "_")}}
+          - from: ./${{parameters.name}}/src/it/java/com/triplelift/TEMPLATE_API
+            to: ./${{parameters.name}}/src/it/java/com/triplelift/${{parameters.name | replace("-", "_")}}
 
     - id: delete-files-sdk-publishing
-      if: ${{ 'sdk_publishing' not in parameters.dependencies }}
-      name: Delete SDK Publising files
+      if: ${{ "sdk_publishing" not in parameters.dependencies }}
+      name: Delete Files Associated with GraphQL Code Generator
       action: fs:delete
       input:
         files:
           - ${{parameters.name}}/${{parameters.name}}-sdk
           - .github/workflows/publish-sdk.yml
           - ${{parameters.name}}/package.json
+          - ${{parameters.name}}/codegen.yml
+          - ${{parameters.name}}/package-lock.json
+          - ${{parameters.name}}/yarn.lock
 
+    - id: delete-flyway-migrate-files
+      if: ${{ "flyway_migrate_files" not in parameters.dependencies }}
+      name: Delete Files Associated with Flyway Migration
+      action: fs:delete
+      input:
+        files:
+          - .github/workflows/migrate-mysql-dev.yml
+          - .github/workflows/migrate-mysql-prod.yml
+          - db-migrations
+          
     - id: publish
-      name: Publish
+      name: Publish Repo to GitHub
       action: publish:github
       input:
         allowedHosts: [ 'github.com' ]
         description: ${{ parameters.description }}
         repoUrl: ${{ parameters.repoUrl }}
         repoVisibility: 'internal'
+        defaultBranch: 'develop'
         collaborators:
-          - username: 'engineering'
+          - team: 'engineering'
             access: 'maintain'
-          - username: ${{ parameters.owner }}
+          - team: ${{ parameters.owner }}
             access: 'admin'
 
     - id: register
-      name: Register
+      name: Register Service to Catalog
       action: catalog:register
       input:
         repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
         catalogInfoPath: "/catalog-info.yaml"
+        
+    - id: cc-create
+      name: Add Service to Code Climate Quality
+      action: http:backstage:request
+      input:
+        method: 'POST'
+        path: '/api/proxy/codeclimate/scaffolder/v1/orgs/6217a5d89f71b400e0003168/repos'
+        headers:
+          content-type: 'application/json'
+        body:
+          data:
+            type: 'repos'
+            attributes:
+              url: ${{ steps.publish.output.remoteUrl.slice(0, -4) }}
 
   output:
     links:
