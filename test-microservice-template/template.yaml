@@ -145,7 +145,7 @@ spec:
             type: 'repos'
             attributes:
               url: ${{ steps.publish.output.remoteUrl.slice(0, -4) }}
-          
+
     - id: publish
       name: Publish Repo to GitHub
       action: publish:github
