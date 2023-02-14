@@ -1,8 +1,8 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: java-microservice-template
-  title: Java Microservice Template
+  name: test-java-microservice-template
+  title: Test Java Microservice Template
   description: Bootstrap application for Spring GraphQL microservices
   tags:
     - java
