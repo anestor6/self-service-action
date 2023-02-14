@@ -167,20 +167,6 @@ spec:
       input:
         repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
         catalogInfoPath: "/catalog-info.yaml"
-        
-    - id: cc-create
-      name: Add Service to Code Climate Quality
-      action: http:backstage:request
-      input:
-        method: 'POST'
-        path: '/api/proxy/codeclimate/scaffolder/v1/orgs/6217a5d89f71b400e0003168/repos'
-        headers:
-          content-type: 'application/json'
-        body:
-          data:
-            type: 'repos'
-            attributes:
-              url: ${{ steps.publish.output.remoteUrl.slice(0, -4) }}
 
   output:
     links:
