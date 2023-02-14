@@ -137,7 +137,7 @@ spec:
       action: http:backstage:request
       input:
         method: 'POST'
-        path: '/api/proxy/codeclimate/scaffolder/v1/orgs/6217a5d89f71b400e0003168/repos'
+        path: '/api/proxy/codeclimate/v1/orgs/6217a5d89f71b400e0003168/repos'
         headers:
           content-type: 'application/json'
         body:
