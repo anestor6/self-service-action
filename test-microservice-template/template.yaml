@@ -131,7 +131,7 @@ spec:
           - .github/workflows/migrate-mysql-dev.yml
           - .github/workflows/migrate-mysql-prod.yml
           - db-migrations
-          
+        
     - id: cc-create
       name: Add Service to Code Climate Quality
       action: http:backstage:request
@@ -145,28 +145,6 @@ spec:
             type: 'repos'
             attributes:
               url: ${{ steps.publish.output.remoteUrl.slice(0, -4) }}
-
-    - id: publish
-      name: Publish Repo to GitHub
-      action: publish:github
-      input:
-        allowedHosts: [ 'github.com' ]
-        description: ${{ parameters.description }}
-        repoUrl: ${{ parameters.repoUrl }}
-        repoVisibility: 'internal'
-        defaultBranch: 'develop'
-        collaborators:
-          - team: 'engineering'
-            access: 'maintain'
-          - team: ${{ parameters.owner }}
-            access: 'admin'
-
-    - id: register
-      name: Register Service to Catalog
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
-        catalogInfoPath: "/catalog-info.yaml"
 
   output:
     links:
